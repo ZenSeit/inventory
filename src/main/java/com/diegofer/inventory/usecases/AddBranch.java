@@ -1,5 +1,6 @@
 package com.diegofer.inventory.usecases;
 
+import com.diegofer.inventory.dto.BranchDTO;
 import com.diegofer.inventory.model.Branch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -15,7 +16,7 @@ public class AddBranch {
 
     private final DatabaseClient dbClient;
 
-    public Mono<Branch> AddBranch(Branch branch){
+    public Mono<BranchDTO> AddBranch(BranchDTO branch){
         String newId = UUID.randomUUID().toString();
         dbClient.sql("insert into Branch(id, name, location) values(:id, :name, :location)")
                 .bind("id", newId)
