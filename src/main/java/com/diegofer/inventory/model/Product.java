@@ -18,5 +18,6 @@ public class Product {
     private String description;
     private int inventoryStock;
     private String category;
+    private String branchId;
 
 }

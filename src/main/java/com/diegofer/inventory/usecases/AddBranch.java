@@ -1,31 +1,21 @@
-package com.diegofer.inventory.service;
+package com.diegofer.inventory.usecases;
 
 import com.diegofer.inventory.model.Branch;
-import com.diegofer.inventory.repository.BranchRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
-public class BranchService {
+public class AddBranch {
 
-    private final BranchRepository branchRepository;
 
     private final DatabaseClient dbClient;
 
-    public Flux<Branch> getBranches(){
-        return branchRepository.findAll();
-    }
-
-    public Mono<Branch> addBranch(Branch branch){
-
+    public Mono<Branch> AddBranch(Branch branch){
         String newId = UUID.randomUUID().toString();
         dbClient.sql("insert into Branch(id, name, location) values(:id, :name, :location)")
                 .bind("id", newId)
@@ -37,4 +27,7 @@ public class BranchService {
         branch.setId(newId);
         return Mono.just(branch);
     }
+
+
+
 }
