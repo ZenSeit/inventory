@@ -18,7 +18,7 @@ public class RegisterProduct {
 
     public Mono<ProductDTO> save(ProductDTO product){
         String newId = UUID.randomUUID().toString();
-        dbClient.sql("INSERT INTO Product(id, name, description, inventoryStock, category, branch_id) VALUES(:id, :name, :description, :inventoryStock, :category, :branchId)")
+        dbClient.sql("INSERT INTO Product(id, name, description, inventory_stock, category, branch_id) VALUES(:id, :name, :description, :inventoryStock, :category, :branchId)")
                 .bind("id", newId)
                 .bind("name", product.getName())
                 .bind("description", product.getDescription())

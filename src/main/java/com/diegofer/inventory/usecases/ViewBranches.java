@@ -21,4 +21,5 @@ public class ViewBranches {
     public Flux<BranchDTO> getBranches(){
         return branchRepository.findAll().switchIfEmpty(Flux.empty()).map(branch -> mapper.map(branch, BranchDTO.class));
     }
+
 }

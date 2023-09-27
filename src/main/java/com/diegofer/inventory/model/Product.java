@@ -22,4 +22,8 @@ public class Product {
     @Column("branch_id")
     private String branchId;
 
+    public Product addStock(int stock){
+        this.inventoryStock = this.inventoryStock + stock;
+        return this;
+    }
 }

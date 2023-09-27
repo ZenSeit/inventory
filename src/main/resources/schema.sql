@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Product (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
-    inventoryStock INT NOT NULL,
+    inventory_stock INT NOT NULL,
     category VARCHAR(100) NOT NULL,
     branch_id VARCHAR(50),
     FOREIGN KEY (branch_id) REFERENCES Branch(id) ON DELETE CASCADE

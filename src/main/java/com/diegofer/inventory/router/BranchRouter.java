@@ -2,10 +2,9 @@ package com.diegofer.inventory.router;
 
 import com.diegofer.inventory.dto.BranchDTO;
 import com.diegofer.inventory.dto.ProductDTO;
+import com.diegofer.inventory.dto.UserDTO;
 import com.diegofer.inventory.model.Branch;
-import com.diegofer.inventory.usecases.AddBranch;
-import com.diegofer.inventory.usecases.RegisterProduct;
-import com.diegofer.inventory.usecases.ViewBranches;
+import com.diegofer.inventory.usecases.*;
 import org.springframework.boot.autoconfigure.rsocket.RSocketProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +58,41 @@ public class BranchRouter {
                                         .bodyValue(result))
 
                                 .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage()))));
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> registerNewUser(RegisterUser registerUser) {
+        return route(POST("/users").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(UserDTO.class)
+                        .flatMap(userDTO -> registerUser.save(userDTO)
+                                .flatMap(result -> ServerResponse.status(201)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(result))
+
+                                .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage()))));
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> patchAddProductStock(AddStockToProduct addStockToProduct) {
+        return route(PATCH("/products/id/{id}/stock/{stock}/add"),
+                request -> addStockToProduct.apply(request.pathVariable("id"), Integer.valueOf(request.pathVariable("stock")))
+                        .flatMap(item -> ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(item))
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getProductsByBranch(GetProductsByBranchId useCase) {
+        return route(GET("/products/{branch_id}"),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(useCase.apply(request.pathVariable("branch_id")), ProductDTO.class))
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+
+
     }
 
 }
